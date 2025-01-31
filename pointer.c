@@ -1,7 +1,7 @@
 /*
   Lab 2(Data Lab  - Pointers)
  *
- * <PLEASE REPLACE THIS LINE WITH YOUR NAME AND STUDENT USERNAME>
+ * Name: Asfand Khan, ID: 301605890
  *
  * pointer.c - Source file with your solutions to the Lab.
  *             This is the file you will hand in to your instructor.
@@ -111,8 +111,11 @@ int intSize() {
   int *intPtr1;
   int *intPtr2;
   // Write code to compute size of an integer.
+  intPtr1 = intArray;
+  intPtr2 = intPtr1 + 1;
 
-  return 2;
+  return (char *)intPtr2 - (char *)intPtr1;
+  // return 2;
 }
 
 /*
@@ -134,8 +137,11 @@ int doubleSize() {
   double *doubPtr1;
   double *doubPtr2;
   // Write code to compute size of a double.
+  doubPtr1 = doubArray;
+  doubPtr2 = doubPtr1 + 1;
 
-  return 2;
+  return (char *)doubPtr2 - (char *)doubPtr1;
+  //return 2;
 }
 
 /*
@@ -157,8 +163,12 @@ int pointerSize() {
   double **ptrPtr1;
   double **ptrPtr2;
   // Write code to compute size of a pointer.
+  ptrPtr1 = ptrArray;
+  ptrPtr2 = ptrPtr1 + 1;
 
-  return 2;
+  return (char *)ptrPtr2 - (char *)ptrPtr1;
+
+  //return 2;
 }
 
 /*
@@ -178,6 +188,9 @@ int pointerSize() {
  */
 void swapInts(int *ptr1, int *ptr2) {
   // Your code here
+  int tmp = *ptr1;
+  *ptr1 = *ptr2;
+  *ptr2 = tmp;
 }
 
 /*
@@ -200,8 +213,10 @@ int changeValue() {
   int *intPtr1 = intArray;
   // Remember not to use constants greater than 255.
   // Remember to use * to dereference. You cannot use '[<index>]' syntax.
+  int *intPtr2 = intPtr1 + 5;
+  *intPtr2 = 295;
 
-  return intArray[5];
+  return *intPtr2;
 }
 
 /*
@@ -223,7 +238,11 @@ int changeValue() {
  */
 int withinSameBlock(int *ptr1, int *ptr2) {
   // Your code here
-  return 2;
+  int block1 = (int)ptr1 >> 6;
+  int block2 = (int)ptr2 >> 6;
+
+  return !(block1 ^ block2);
+  //return 2;
 }
 
 /*
@@ -247,7 +266,12 @@ int withinSameBlock(int *ptr1, int *ptr2) {
  */
 int withinArray(int *intArray, int size, int *ptr) {
   // Your code here
-  return 2;
+  int start = (int)intArray;
+  int end = (int)intArray + size * sizeof(int);
+  int p = (int)ptr;
+
+  return !((p - start) >> 31) * !!((end - p));
+  //return 2;
 }
 
 /*
@@ -269,37 +293,52 @@ int withinArray(int *intArray, int size, int *ptr) {
  */
 int stringLength(char *s) {
   // Your code here
-  return 2;
+  int len = 0;
+  char *iter = s;
+  while (*iter != '\0')
+  {
+    len += 1;
+    iter = iter + 1;
+  }
+
+  return len;
+  //return 2;
 }
 
-/*
- * Change the value pointed to by ptr byte-by-byte so that when returned as an
- * integer the value is 295295.
- *
- * Hint: Remember that an int is 4 bytes.
- *
- * Hint: Remember how little endian works for data storage, how is it different
- * between an multiple bytes(int) and a single byte?
- *
- * Hint: It will be easiest to start convert 295295 into binary form and
- * starting seeing how the endian works from there.
- *
- * ALLOWED:
- *   Pointer operators: *, &
- *   Binary integer operators: -, +, *
- *   Shorthand operators based on the above: ex. +=, *=, ++, --, etc.
- *   Unary integer operators: !
- *
- * DISALLOWED:
- *   Pointer operators: [] (Array Indexing Operator)
- *   Binary integer operators: &, &&, |, ||, <, >, <<, >>, ==, !=, ^, /, %
- *   Unary integer operators: ~, -
- */
-int endianExperiment(int *ptr) {
-  char *bytePtr;
-  // Your code here
-  return *ptr;
-}
+  /*
+  * Change the value pointed to by ptr byte-by-byte so that when returned as an
+  * integer the value is 295295.
+  *
+  * Hint: Remember that an int is 4 bytes.
+  *
+  * Hint: Remember how little endian works for data storage, how is it different
+  * between an multiple bytes(int) and a single byte?
+  *
+  * Hint: It will be easiest to start convert 295295 into binary form and
+  * starting seeing how the endian works from there.
+  *
+  * ALLOWED:
+  *   Pointer operators: *, &
+  *   Binary integer operators: -, +, *
+  *   Shorthand operators based on the above: ex. +=, *=, ++, --, etc.
+  *   Unary integer operators: !
+  *
+  * DISALLOWED:
+  *   Pointer operators: [] (Array Indexing Operator)
+  *   Binary integer operators: &, &&, |, ||, <, >, <<, >>, ==, !=, ^, /, %
+  *   Unary integer operators: ~, -
+  */
+  int endianExperiment(int *ptr) {
+    char *bytePtr;
+    // Your code here
+    bytePtr = (char *)ptr;
+    *bytePtr = 0x7F;
+    *(bytePtr+1) = 0x80;
+    *(bytePtr+2) = 0x04;
+    *(bytePtr+3) = 0x00;
+
+    return *ptr;
+  }
 
 /**
  * Swaps the values stored at the memory addresses pointed to by a and b.
@@ -358,9 +397,17 @@ of bounds!
 int smallest_idx(int *arr, int len) {
   int i;
   int smallest_i = 0;
-  int smallest = arr[0];
+  int smallest = *arr;
 
   // TODO: implement me using a for loop.
+  for(i = 0; i < len; i++)
+  {
+    if(*(arr + i) < smallest)
+    {
+      smallest = *(arr + i);
+      smallest_i = i;
+    }
+  }
 
   return smallest_i;
 }
